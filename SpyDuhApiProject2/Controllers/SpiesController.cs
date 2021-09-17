@@ -24,6 +24,7 @@ namespace SpyDuhApiProject2.Controllers
             return Ok(_spyRepo.GetAll());
         }
 
+        // get spy by id
         [HttpGet("{id}")]
         public IActionResult GetSpyById(Guid id)
         {
