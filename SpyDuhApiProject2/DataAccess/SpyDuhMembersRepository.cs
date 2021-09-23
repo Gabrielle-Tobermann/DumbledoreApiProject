@@ -4,12 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace SpyDuhApiProject2.DataAccess
 {
     public class SpyDuhMembersRepository
     {
-        const string _connectionString = "Server=localhost;Database=LinenAndBird;Trusted_Connection=True;"; 
+        string _connectionString;
+
+        public SpyDuhMembersRepository(IConfiguration config)
+        {
+            _connectionString = config.GetConnectionString("SpyDuh");
+        }
 
         static List<SpyDuhMember> _spyDuhMembers = new List<SpyDuhMember>
         {

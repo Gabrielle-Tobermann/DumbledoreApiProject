@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using SpyDuhApiProject2.DataAccess;
 using SpyDuhApiProject2.Models;
 using System;
@@ -16,10 +17,10 @@ namespace SpyDuhApiProject2.Controllers
         SpyRepository _spiesRepository;
         SpyDuhMembersRepository _spyDuhMembersRepository;
 
-        public SpyDuhMembersController()
+        public SpyDuhMembersController(SpyDuhMembersRepository repo)
         {
-            _spiesRepository = new SpyRepository(); 
-            _spyDuhMembersRepository = new SpyDuhMembersRepository();
+            _spiesRepository = new SpyRepository();
+            _spyDuhMembersRepository = repo;
         }
 
         [HttpPost]

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using SpyDuhApiProject2.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,10 @@ namespace SpyDuhApiProject2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+         // When configuration is needed, give me the same copy of this configuration for the entire time the app is running.
+            services.AddSingleton<IConfiguration>(Configuration);
+            // create a new spyduhMember repo every time someone asks for one.
+            services.AddTransient<SpyDuhMembersRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
