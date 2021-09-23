@@ -37,5 +37,6 @@ namespace SpyDuhApiProject2.Controllers
             }
 
             return Ok(spy);
+        }
     }
 }

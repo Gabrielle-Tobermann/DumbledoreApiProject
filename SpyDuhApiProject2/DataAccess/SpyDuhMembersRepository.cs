@@ -3,11 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 namespace SpyDuhApiProject2.DataAccess
 {
     public class SpyDuhMembersRepository
     {
+        const string _connectionString = "Server=localhost;Database=LinenAndBird;Trusted_Connection=True;"; 
+
         static List<SpyDuhMember> _spyDuhMembers = new List<SpyDuhMember>
         {
             new SpyDuhMember
@@ -46,7 +49,10 @@ namespace SpyDuhApiProject2.DataAccess
 
         internal void Add(SpyDuhMember spyDuhMember)
         {
-            _spyDuhMembers.Add(spyDuhMember);
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = @"insert into SpyduhMembers";
         }
 
         internal IEnumerable<SpyDuhMember> GetAll()
