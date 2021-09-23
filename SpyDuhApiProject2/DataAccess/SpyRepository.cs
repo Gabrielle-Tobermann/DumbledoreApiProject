@@ -2,12 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks; using Microsoft.Data.SqlClient;
+using System.Threading.Tasks; 
+using Microsoft.Data.SqlClient;
 
 namespace SpyDuhApiProject2.DataAccess
 {
     public class SpyRepository
     {
+
+        const string _connectionString = "Server=localhost;Database=SpyDuh;Trusted_Connection=True;";
+
         static List<Spy> _spies = new List<Spy>
         {
             new Spy
