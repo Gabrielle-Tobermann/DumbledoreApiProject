@@ -65,56 +65,56 @@ namespace SpyDuhApiProject2.Controllers
         }
         
 
-        [HttpPatch("addFriend/{accountId}")]
-        public IActionResult AddFriendToSpyDuhAccount(Guid accountId, Guid friendId)
+        [HttpPost("addFriend")]
+        public IActionResult AddFriendToSpyDuhAccount(Friend newFriend)
         {
-            _spyDuhMembersRepository.AddFriendToSpyDuhAccount(accountId, friendId);
-            var updatedAccount = _spyDuhMembersRepository.GetById(accountId);
-            return Ok(updatedAccount);
+            _spyDuhMembersRepository.AddFriend(newFriend);
+            // var updatedAccount = _spyDuhMembersRepository.GetById(newFriend.);
+            return Created($"api/spyDuhMembers/addFriend/{newFriend.RelationshipId}", newFriend);
         }
 
-        [HttpPatch("removeFriend/{accountId}")]
-        public IActionResult RemoveFriendFromSpyDuhAccount(Guid accountId, Guid friendId)
-        {
-            var member = _spyDuhMembersRepository.GetById(accountId);
-            if (!(member.Friends.Any()) || !(member.Friends.Contains(friendId)))
-            {
-                return NotFound("No friends exist, or friend does not exist under this member.");
-            }
-            _spyDuhMembersRepository.RemoveFriendFromSpyDuhAccount(accountId, friendId);
-            return Ok(member);
-        }
+        //[HttpPatch("removeFriend/{accountId}")]
+        //public IActionResult RemoveFriendFromSpyDuhAccount(Guid accountId, Guid friendId)
+        //{
+        //    var member = _spyDuhMembersRepository.GetById(accountId);
+        //    if (!(member.Friends.Any()) || !(member.Friends.Contains(friendId)))
+        //    {
+        //        return NotFound("No friends exist, or friend does not exist under this member.");
+        //    }
+        //    _spyDuhMembersRepository.RemoveFriendFromSpyDuhAccount(accountId, friendId);
+        //    return Ok(member);
+        //}
         
-        [HttpPatch("addEnemy/{accountId}")]
-        public IActionResult AddEnemyToSpyDuhAccount(Guid accountId, Guid enemyId)
-        {
-            _spyDuhMembersRepository.AddEnemyToSpyDuhAccount(accountId, enemyId);
-            var updatedAccount = _spyDuhMembersRepository.GetById(accountId);
-            return Ok(updatedAccount);
-        }
+        //[HttpPatch("addEnemy/{accountId}")]
+        //public IActionResult AddEnemyToSpyDuhAccount(Guid accountId, Guid enemyId)
+        //{
+        //    _spyDuhMembersRepository.AddEnemyToSpyDuhAccount(accountId, enemyId);
+        //    var updatedAccount = _spyDuhMembersRepository.GetById(accountId);
+        //    return Ok(updatedAccount);
+        //}
 
-        [HttpPatch("removeEnemy/{accountId}")]
-        public IActionResult RemoveEnemyFromSpyDuhAccount(Guid accountId, Guid enemyId)
-        {
-            var member = _spyDuhMembersRepository.GetById(accountId);
-            if (!(member.Enemies.Any()) || !(member.Enemies.Contains(enemyId)))
-            {
-                return NotFound("No enemies exist, or enemy does not exist under this member.");
-            }
-            _spyDuhMembersRepository.RemoveEnemyFromSpyDuhAccount(accountId, enemyId);
-            return Ok(member);
-        }
+        //[HttpPatch("removeEnemy/{accountId}")]
+        //public IActionResult RemoveEnemyFromSpyDuhAccount(Guid accountId, Guid enemyId)
+        //{
+        //    var member = _spyDuhMembersRepository.GetById(accountId);
+        //    if (!(member.Enemies.Any()) || !(member.Enemies.Contains(enemyId)))
+        //    {
+        //        return NotFound("No enemies exist, or enemy does not exist under this member.");
+        //    }
+        //    _spyDuhMembersRepository.RemoveEnemyFromSpyDuhAccount(accountId, enemyId);
+        //    return Ok(member);
+        //}
 
-        [HttpGet("enemies/{accountId}")]
-        public IActionResult ShowEnemiesOfAccount(Guid accountId)
-        {
-            return Ok(_spyDuhMembersRepository.ShowAccountEnemies(accountId));
-        }
-        [HttpGet("friends/{accountId}")]
-        public IActionResult ShowFriendsOfAccount(Guid accountId)
-        {
-            return Ok(_spyDuhMembersRepository.ShowAccountFriends(accountId));
-        }
+        //[HttpGet("enemies/{accountId}")]
+        //public IActionResult ShowEnemiesOfAccount(Guid accountId)
+        //{
+        //    return Ok(_spyDuhMembersRepository.ShowAccountEnemies(accountId));
+        //}
+        //[HttpGet("friends/{accountId}")]
+        //public IActionResult ShowFriendsOfAccount(Guid accountId)
+        //{
+        //    return Ok(_spyDuhMembersRepository.ShowAccountFriends(accountId));
+        //}
 
         [HttpGet("skills")]
         public IActionResult GetSpyDuhMemberSkills(Guid accountId)

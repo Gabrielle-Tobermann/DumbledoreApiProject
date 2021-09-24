@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Dapper;
 
 namespace SpyDuhApiProject2.DataAccess
 {
@@ -83,44 +84,54 @@ namespace SpyDuhApiProject2.DataAccess
             return _spyDuhMembers.FirstOrDefault(spyDuhMember => spyDuhMember.Id == spyDuhId);
         }
 
-        internal void  AddFriendToSpyDuhAccount(Guid accountId, Guid friendId)
+        internal void  AddFriend(Friend newFriend)
         {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            spyDuhMember.Friends.Add(friendId);
-        }
-        internal void RemoveFriendFromSpyDuhAccount(Guid accountId, Guid friendId)
-        {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            spyDuhMember.Friends.Remove(friendId);
-        }
-        internal void AddEnemyToSpyDuhAccount(Guid accountId, Guid enemyId)
-        {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            spyDuhMember.Enemies.Add(enemyId);
-        }
-        internal void RemoveEnemyFromSpyDuhAccount(Guid accountId, Guid enemyId)
-        {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            spyDuhMember.Enemies.Remove(enemyId);
-        }
+            var db = new SqlConnection(_connectionString);
 
-        internal List<Guid> ShowAccountEnemies(Guid accountId)
-        {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            return spyDuhMember.Enemies;
-        }
+            var sql = @"insert into Friends(SpyId, FriendId)
+                        output inserted.RelationshipId
+                        values (@SpyId, @FriendId)";
 
-        internal List<Guid> ShowAccountFriends(Guid accountId)
-        {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            return spyDuhMember.Friends;
+            var id = db.ExecuteScalar<Guid>(sql, newFriend);
+            newFriend.RelationshipId = id;
+
+
+            //var repo = new SpyDuhMembersRepository();
+            //var spyDuhMember = repo.GetById(accountId);
+            //spyDuhMember.Friends.Add(friendId);
         }
+        //internal void RemoveFriendFromSpyDuhAccount(Guid accountId, Guid friendId)
+        //{
+        //    var repo = new SpyDuhMembersRepository();
+        //    var spyDuhMember = repo.GetById(accountId);
+        //    spyDuhMember.Friends.Remove(friendId);
+        //}
+        //internal void AddEnemyToSpyDuhAccount(Guid accountId, Guid enemyId)
+        //{
+        //    var repo = new SpyDuhMembersRepository();
+        //    var spyDuhMember = repo.GetById(accountId);
+        //    spyDuhMember.Enemies.Add(enemyId);
+        //}
+        //internal void RemoveEnemyFromSpyDuhAccount(Guid accountId, Guid enemyId)
+        //{
+        //    var repo = new SpyDuhMembersRepository();
+        //    var spyDuhMember = repo.GetById(accountId);
+        //    spyDuhMember.Enemies.Remove(enemyId);
+        // }
+
+        //internal List<Guid> ShowAccountEnemies(Guid accountId)
+        //{
+        //    var repo = new SpyDuhMembersRepository();
+        //    var spyDuhMember = repo.GetById(accountId);
+        //    return spyDuhMember.Enemies;
+        //}
+
+        //internal List<Guid> ShowAccountFriends(Guid accountId)
+        //{
+        //    var repo = new SpyDuhMembersRepository();
+        //    var spyDuhMember = repo.GetById(accountId);
+        //    return spyDuhMember.Friends;
+        //}
 
         internal List<string> GetMemberSkills(Guid accountId)
         {
