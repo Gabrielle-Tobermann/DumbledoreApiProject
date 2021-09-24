@@ -69,7 +69,6 @@ namespace SpyDuhApiProject2.Controllers
         public IActionResult AddFriendToSpyDuhAccount(Friend newFriend)
         {
             _spyDuhMembersRepository.AddFriend(newFriend);
-            // var updatedAccount = _spyDuhMembersRepository.GetById(newFriend.);
             return Created($"api/spyDuhMembers/addFriend/{newFriend.RelationshipId}", newFriend);
         }
 
@@ -84,14 +83,13 @@ namespace SpyDuhApiProject2.Controllers
         //    _spyDuhMembersRepository.RemoveFriendFromSpyDuhAccount(accountId, friendId);
         //    return Ok(member);
         //}
-        
-        //[HttpPatch("addEnemy/{accountId}")]
-        //public IActionResult AddEnemyToSpyDuhAccount(Guid accountId, Guid enemyId)
-        //{
-        //    _spyDuhMembersRepository.AddEnemyToSpyDuhAccount(accountId, enemyId);
-        //    var updatedAccount = _spyDuhMembersRepository.GetById(accountId);
-        //    return Ok(updatedAccount);
-        //}
+
+        [HttpPost("addEnemy")]
+        public IActionResult AddEnemyToSpyDuhAccount(Enemy newEnemy)
+        {
+            _spyDuhMembersRepository.AddEnemy(newEnemy);
+            return Created($"api/spyDuhMembers/AddEnemy/{newEnemy.RelationshipId}", newEnemy);
+        }
 
         //[HttpPatch("removeEnemy/{accountId}")]
         //public IActionResult RemoveEnemyFromSpyDuhAccount(Guid accountId, Guid enemyId)

@@ -106,12 +106,17 @@ namespace SpyDuhApiProject2.DataAccess
         //    var spyDuhMember = repo.GetById(accountId);
         //    spyDuhMember.Friends.Remove(friendId);
         //}
-        //internal void AddEnemyToSpyDuhAccount(Guid accountId, Guid enemyId)
-        //{
-        //    var repo = new SpyDuhMembersRepository();
-        //    var spyDuhMember = repo.GetById(accountId);
-        //    spyDuhMember.Enemies.Add(enemyId);
-        //}
+        internal void AddEnemy(Enemy newEnemy)
+        {
+            var db = new SqlConnection(_connectionString);
+
+            var sql = @"insert into Enemies(SpyId, EnemyId)
+                         output inserted.RelationshipId
+                         values (@SpyId, @EnemyId)";
+
+            var id = db.ExecuteScalar<Guid>(sql, newEnemy);
+            newEnemy.RelationshipId = id;
+        }
         //internal void RemoveEnemyFromSpyDuhAccount(Guid accountId, Guid enemyId)
         //{
         //    var repo = new SpyDuhMembersRepository();
