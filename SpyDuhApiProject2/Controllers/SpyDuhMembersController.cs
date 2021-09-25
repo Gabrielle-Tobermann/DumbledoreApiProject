@@ -126,10 +126,11 @@ namespace SpyDuhApiProject2.Controllers
             return Ok(_spyDuhMembersRepository.GetMemberServices(accountId));
         }
 
-        [HttpPatch("addSkill/{accountId}")]
-        public IActionResult AddMemberSkill(Guid accountId, string newSkill)
+        [HttpPost("addSkill")]
+        public IActionResult AddMemberSkill(Skill newSkill)
         {
-            return Ok(_spyDuhMembersRepository.AddSkill(accountId, newSkill));
+            _spyDuhMembersRepository.AddSkill(newSkill);
+            return Created($"api/spyduhMembers/addSkill/{newSkill.SkillId}", newSkill);
         }
 
         [HttpPatch("removeSkill/{accountId}")]

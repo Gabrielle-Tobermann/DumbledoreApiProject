@@ -86,6 +86,9 @@ namespace SpyDuhApiProject2.DataAccess
 
         internal void  AddFriend(Friend newFriend)
         {
+            // Adding a friend to the Friends table with:
+            // SpyId, FriendId, RelationshipId (pk)
+
             var db = new SqlConnection(_connectionString);
 
             var sql = @"insert into Friends(SpyId, FriendId)
@@ -94,11 +97,6 @@ namespace SpyDuhApiProject2.DataAccess
 
             var id = db.ExecuteScalar<Guid>(sql, newFriend);
             newFriend.RelationshipId = id;
-
-
-            //var repo = new SpyDuhMembersRepository();
-            //var spyDuhMember = repo.GetById(accountId);
-            //spyDuhMember.Friends.Add(friendId);
         }
         //internal void RemoveFriendFromSpyDuhAccount(Guid accountId, Guid friendId)
         //{
@@ -150,11 +148,20 @@ namespace SpyDuhApiProject2.DataAccess
             return singleMember.Services;
         }
 
-        internal List<string> AddSkill(Guid accountId, string newSkill)
+        internal void AddSkill(Skill newSkill)
         {
-            var member = _spyDuhMembers.FirstOrDefault(member => member.Id == accountId);
-            member.Skills.Add(newSkill);
-            return (member.Skills);
+            var db = new SqlConnection(_connectionString);
+
+            var sql = @"insert into Skills(Name, SpyId)
+                        output inserted.SkillId
+                        values (@Name, @SpyId)";
+
+            var id = db.ExecuteScalar<Guid>(sql, newSkill);
+            newSkill.SkillId = id;
+
+            //var member = _spyDuhMembers.FirstOrDefault(member => member.Id == accountId);
+            //member.Skills.Add(newSkill);
+            //return (member.Skills);
         }
 
         internal List<string> RemoveSkill(Guid accountId, string skill)
