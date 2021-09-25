@@ -4,12 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Dapper;
 
 namespace SpyDuhApiProject2.DataAccess
 {
     public class SpyDuhMembersRepository
     {
-        const string _connectionString = "Server=localhost;Database=LinenAndBird;Trusted_Connection=True;"; 
+        string _connectionString;
+
+        public SpyDuhMembersRepository(IConfiguration config)
+        {
+            _connectionString = config.GetConnectionString("SpyDuh");
+        }
 
         static List<SpyDuhMember> _spyDuhMembers = new List<SpyDuhMember>
         {
@@ -77,44 +84,63 @@ namespace SpyDuhApiProject2.DataAccess
             return _spyDuhMembers.FirstOrDefault(spyDuhMember => spyDuhMember.Id == spyDuhId);
         }
 
-        internal void  AddFriendToSpyDuhAccount(Guid accountId, Guid friendId)
+        internal void  AddFriend(Friend newFriend)
         {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            spyDuhMember.Friends.Add(friendId);
+            // Adding a friend to the Friends table with:
+            // SpyId, FriendId, RelationshipId (pk)
+
+            var db = new SqlConnection(_connectionString);
+
+            var sql = @"insert into Friends(SpyId, FriendId)
+                        output inserted.RelationshipId
+                        values (@SpyId, @FriendId)";
+
+            var id = db.ExecuteScalar<Guid>(sql, newFriend);
+            newFriend.RelationshipId = id;
         }
-        internal void RemoveFriendFromSpyDuhAccount(Guid accountId, Guid friendId)
+        //internal void RemoveFriendFromSpyDuhAccount(Guid accountId, Guid friendId)
+        //{
+        //    var repo = new SpyDuhMembersRepository();
+        //    var spyDuhMember = repo.GetById(accountId);
+        //    spyDuhMember.Friends.Remove(friendId);
+        //}
+        internal void AddEnemy(Enemy newEnemy)
         {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            spyDuhMember.Friends.Remove(friendId);
+            var db = new SqlConnection(_connectionString);
+
+            var sql = @"insert into Enemies(SpyId, EnemyId)
+                         output inserted.RelationshipId
+                         values (@SpyId, @EnemyId)";
+
+            var id = db.ExecuteScalar<Guid>(sql, newEnemy);
+            newEnemy.RelationshipId = id;
         }
-        internal void AddEnemyToSpyDuhAccount(Guid accountId, Guid enemyId)
+        internal void RemoveEnemy(Guid relationshipId)
         {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            spyDuhMember.Enemies.Add(enemyId);
-        }
-        internal void RemoveEnemyFromSpyDuhAccount(Guid accountId, Guid enemyId)
-        {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            spyDuhMember.Enemies.Remove(enemyId);
+            var db = new SqlConnection(_connectionString);
+
+            var sql = @"delete from Enemies
+                        where RelationshipId = @relationshipId";
+
+            db.Execute(sql, new { relationshipId });
+            //var repo = new SpyDuhMembersRepository();
+            //var spyDuhMember = repo.GetById(accountId);
+            //spyDuhMember.Enemies.Remove(enemyId);
         }
 
-        internal List<Guid> ShowAccountEnemies(Guid accountId)
-        {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            return spyDuhMember.Enemies;
-        }
+        //internal List<Guid> ShowAccountEnemies(Guid accountId)
+        //{
+        //    var repo = new SpyDuhMembersRepository();
+        //    var spyDuhMember = repo.GetById(accountId);
+        //    return spyDuhMember.Enemies;
+        //}
 
-        internal List<Guid> ShowAccountFriends(Guid accountId)
-        {
-            var repo = new SpyDuhMembersRepository();
-            var spyDuhMember = repo.GetById(accountId);
-            return spyDuhMember.Friends;
-        }
+        //internal List<Guid> ShowAccountFriends(Guid accountId)
+        //{
+        //    var repo = new SpyDuhMembersRepository();
+        //    var spyDuhMember = repo.GetById(accountId);
+        //    return spyDuhMember.Friends;
+        //}
 
         internal List<string> GetMemberSkills(Guid accountId)
         {
@@ -128,11 +154,16 @@ namespace SpyDuhApiProject2.DataAccess
             return singleMember.Services;
         }
 
-        internal List<string> AddSkill(Guid accountId, string newSkill)
+        internal void AddSkill(Skill newSkill)
         {
-            var member = _spyDuhMembers.FirstOrDefault(member => member.Id == accountId);
-            member.Skills.Add(newSkill);
-            return (member.Skills);
+            var db = new SqlConnection(_connectionString);
+
+            var sql = @"insert into Skills(Name, SpyId)
+                        output inserted.SkillId
+                        values (@Name, @SpyId)";
+
+            var id = db.ExecuteScalar<Guid>(sql, newSkill);
+            newSkill.SkillId = id;
         }
 
         internal List<string> RemoveSkill(Guid accountId, string skill)
@@ -142,11 +173,16 @@ namespace SpyDuhApiProject2.DataAccess
             return (member.Skills);
         }
 
-        internal List<string> AddService(Guid accountId, string newService)
+        internal void AddService(Service newService)
         {
-            var member = _spyDuhMembers.FirstOrDefault(member => member.Id == accountId);
-            member.Services.Add(newService);
-            return (member.Services);
+            var db = new SqlConnection(_connectionString);
+
+            var sql = @"insert into MemberServices(Description, SpyId)
+                        output inserted.ServiceId
+                        values (@Description, @SpyId)";
+
+            var id = db.ExecuteScalar<Guid>(sql, newService);
+            newService.ServiceId = id;
         }
 
         internal List<string> RemoveService(Guid accountId, string service)

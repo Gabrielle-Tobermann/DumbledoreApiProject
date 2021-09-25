@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using SpyDuhApiProject2.DataAccess;
 using SpyDuhApiProject2.Models;
 using System;
@@ -16,10 +17,10 @@ namespace SpyDuhApiProject2.Controllers
         SpyRepository _spiesRepository;
         SpyDuhMembersRepository _spyDuhMembersRepository;
 
-        public SpyDuhMembersController()
+        public SpyDuhMembersController(SpyDuhMembersRepository repo)
         {
-            _spiesRepository = new SpyRepository(); 
-            _spyDuhMembersRepository = new SpyDuhMembersRepository();
+            _spiesRepository = new SpyRepository();
+            _spyDuhMembersRepository = repo;
         }
 
         [HttpPost]
@@ -64,56 +65,49 @@ namespace SpyDuhApiProject2.Controllers
         }
         
 
-        [HttpPatch("addFriend/{accountId}")]
-        public IActionResult AddFriendToSpyDuhAccount(Guid accountId, Guid friendId)
+        [HttpPost("addFriend")]
+        public IActionResult AddFriendToSpyDuhAccount(Friend newFriend)
         {
-            _spyDuhMembersRepository.AddFriendToSpyDuhAccount(accountId, friendId);
-            var updatedAccount = _spyDuhMembersRepository.GetById(accountId);
-            return Ok(updatedAccount);
+            _spyDuhMembersRepository.AddFriend(newFriend);
+            return Created($"api/spyDuhMembers/addFriend/{newFriend.RelationshipId}", newFriend);
         }
 
-        [HttpPatch("removeFriend/{accountId}")]
-        public IActionResult RemoveFriendFromSpyDuhAccount(Guid accountId, Guid friendId)
+        //[HttpPatch("removeFriend/{accountId}")]
+        //public IActionResult RemoveFriendFromSpyDuhAccount(Guid accountId, Guid friendId)
+        //{
+        //    var member = _spyDuhMembersRepository.GetById(accountId);
+        //    if (!(member.Friends.Any()) || !(member.Friends.Contains(friendId)))
+        //    {
+        //        return NotFound("No friends exist, or friend does not exist under this member.");
+        //    }
+        //    _spyDuhMembersRepository.RemoveFriendFromSpyDuhAccount(accountId, friendId);
+        //    return Ok(member);
+        //}
+
+        [HttpPost("addEnemy")]
+        public IActionResult AddEnemyToSpyDuhAccount(Enemy newEnemy)
         {
-            var member = _spyDuhMembersRepository.GetById(accountId);
-            if (!(member.Friends.Any()) || !(member.Friends.Contains(friendId)))
-            {
-                return NotFound("No friends exist, or friend does not exist under this member.");
-            }
-            _spyDuhMembersRepository.RemoveFriendFromSpyDuhAccount(accountId, friendId);
-            return Ok(member);
-        }
-        
-        [HttpPatch("addEnemy/{accountId}")]
-        public IActionResult AddEnemyToSpyDuhAccount(Guid accountId, Guid enemyId)
-        {
-            _spyDuhMembersRepository.AddEnemyToSpyDuhAccount(accountId, enemyId);
-            var updatedAccount = _spyDuhMembersRepository.GetById(accountId);
-            return Ok(updatedAccount);
+            _spyDuhMembersRepository.AddEnemy(newEnemy);
+            return Created($"api/spyDuhMembers/AddEnemy/{newEnemy.RelationshipId}", newEnemy);
         }
 
-        [HttpPatch("removeEnemy/{accountId}")]
-        public IActionResult RemoveEnemyFromSpyDuhAccount(Guid accountId, Guid enemyId)
+        [HttpDelete("deleteEnemy/{id}")]
+        public IActionResult RemoveEnemy(Guid id)
         {
-            var member = _spyDuhMembersRepository.GetById(accountId);
-            if (!(member.Enemies.Any()) || !(member.Enemies.Contains(enemyId)))
-            {
-                return NotFound("No enemies exist, or enemy does not exist under this member.");
-            }
-            _spyDuhMembersRepository.RemoveEnemyFromSpyDuhAccount(accountId, enemyId);
-            return Ok(member);
+            _spyDuhMembersRepository.RemoveEnemy(id);
+            return Ok();
         }
 
-        [HttpGet("enemies/{accountId}")]
-        public IActionResult ShowEnemiesOfAccount(Guid accountId)
-        {
-            return Ok(_spyDuhMembersRepository.ShowAccountEnemies(accountId));
-        }
-        [HttpGet("friends/{accountId}")]
-        public IActionResult ShowFriendsOfAccount(Guid accountId)
-        {
-            return Ok(_spyDuhMembersRepository.ShowAccountFriends(accountId));
-        }
+        //[HttpGet("enemies/{accountId}")]
+        //public IActionResult ShowEnemiesOfAccount(Guid accountId)
+        //{
+        //    return Ok(_spyDuhMembersRepository.ShowAccountEnemies(accountId));
+        //}
+        //[HttpGet("friends/{accountId}")]
+        //public IActionResult ShowFriendsOfAccount(Guid accountId)
+        //{
+        //    return Ok(_spyDuhMembersRepository.ShowAccountFriends(accountId));
+        //}
 
         [HttpGet("skills")]
         public IActionResult GetSpyDuhMemberSkills(Guid accountId)
@@ -127,10 +121,11 @@ namespace SpyDuhApiProject2.Controllers
             return Ok(_spyDuhMembersRepository.GetMemberServices(accountId));
         }
 
-        [HttpPatch("addSkill/{accountId}")]
-        public IActionResult AddMemberSkill(Guid accountId, string newSkill)
+        [HttpPost("addSkill")]
+        public IActionResult AddMemberSkill(Skill newSkill)
         {
-            return Ok(_spyDuhMembersRepository.AddSkill(accountId, newSkill));
+            _spyDuhMembersRepository.AddSkill(newSkill);
+            return Created($"api/spyduhMembers/addSkill/{newSkill.SkillId}", newSkill);
         }
 
         [HttpPatch("removeSkill/{accountId}")]
@@ -144,10 +139,11 @@ namespace SpyDuhApiProject2.Controllers
             return Ok(_spyDuhMembersRepository.RemoveSkill(accountId, skill));
         }
 
-        [HttpPatch("addService/{accountId}")]
-        public IActionResult AddMemberService(Guid accountId, string newService)
+        [HttpPost("addService")]
+        public IActionResult AddMemberService(Service newService)
         {
-            return Ok(_spyDuhMembersRepository.AddService(accountId, newService));
+            _spyDuhMembersRepository.AddService(newService);
+            return Created($"api/spyduhMembers/AddService/{newService.ServiceId}", newService);
         }
 
         [HttpPatch("removeService/{accountId}")]

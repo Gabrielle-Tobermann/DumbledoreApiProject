@@ -15,11 +15,11 @@ namespace SpyDuhApiProject2.Controllers
     {
         HireRepository _hireRepo;
         SpyDuhMembersRepository _memberRepo;
-        public HiresController()
-        {
-            _hireRepo = new HireRepository();
-            _memberRepo = new SpyDuhMembersRepository();
-        }
+        //public HiresController()
+        //{
+        //    _hireRepo = new HireRepository();
+        //    _memberRepo = new SpyDuhMembersRepository();
+        //}
         [HttpPost]
         public IActionResult HireASpy(HireASpyCommand command) 
         {
