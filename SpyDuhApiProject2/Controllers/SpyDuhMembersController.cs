@@ -144,10 +144,11 @@ namespace SpyDuhApiProject2.Controllers
             return Ok(_spyDuhMembersRepository.RemoveSkill(accountId, skill));
         }
 
-        [HttpPatch("addService/{accountId}")]
-        public IActionResult AddMemberService(Guid accountId, string newService)
+        [HttpPost("addService")]
+        public IActionResult AddMemberService(Service newService)
         {
-            return Ok(_spyDuhMembersRepository.AddService(accountId, newService));
+            _spyDuhMembersRepository.AddService(newService);
+            return Created($"api/spyduhMembers/AddService/{newService.ServiceId}", newService);
         }
 
         [HttpPatch("removeService/{accountId}")]

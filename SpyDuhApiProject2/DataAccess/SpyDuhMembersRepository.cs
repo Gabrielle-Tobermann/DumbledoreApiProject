@@ -158,10 +158,6 @@ namespace SpyDuhApiProject2.DataAccess
 
             var id = db.ExecuteScalar<Guid>(sql, newSkill);
             newSkill.SkillId = id;
-
-            //var member = _spyDuhMembers.FirstOrDefault(member => member.Id == accountId);
-            //member.Skills.Add(newSkill);
-            //return (member.Skills);
         }
 
         internal List<string> RemoveSkill(Guid accountId, string skill)
@@ -171,11 +167,16 @@ namespace SpyDuhApiProject2.DataAccess
             return (member.Skills);
         }
 
-        internal List<string> AddService(Guid accountId, string newService)
+        internal void AddService(Service newService)
         {
-            var member = _spyDuhMembers.FirstOrDefault(member => member.Id == accountId);
-            member.Services.Add(newService);
-            return (member.Services);
+            var db = new SqlConnection(_connectionString);
+
+            var sql = @"insert into MemberServices(Description, SpyId)
+                        output inserted.ServiceId
+                        values (@Description, @SpyId)";
+
+            var id = db.ExecuteScalar<Guid>(sql, newService);
+            newService.ServiceId = id;
         }
 
         internal List<string> RemoveService(Guid accountId, string service)
