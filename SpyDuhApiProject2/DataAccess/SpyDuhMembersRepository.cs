@@ -115,12 +115,18 @@ namespace SpyDuhApiProject2.DataAccess
             var id = db.ExecuteScalar<Guid>(sql, newEnemy);
             newEnemy.RelationshipId = id;
         }
-        //internal void RemoveEnemyFromSpyDuhAccount(Guid accountId, Guid enemyId)
-        //{
-        //    var repo = new SpyDuhMembersRepository();
-        //    var spyDuhMember = repo.GetById(accountId);
-        //    spyDuhMember.Enemies.Remove(enemyId);
-        // }
+        internal void RemoveEnemy(Guid relationshipId)
+        {
+            var db = new SqlConnection(_connectionString);
+
+            var sql = @"delete from Enemies
+                        where RelationshipId = @relationshipId";
+
+            db.Execute(sql, new { relationshipId });
+            //var repo = new SpyDuhMembersRepository();
+            //var spyDuhMember = repo.GetById(accountId);
+            //spyDuhMember.Enemies.Remove(enemyId);
+        }
 
         //internal List<Guid> ShowAccountEnemies(Guid accountId)
         //{

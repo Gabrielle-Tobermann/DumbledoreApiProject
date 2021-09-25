@@ -91,17 +91,12 @@ namespace SpyDuhApiProject2.Controllers
             return Created($"api/spyDuhMembers/AddEnemy/{newEnemy.RelationshipId}", newEnemy);
         }
 
-        //[HttpPatch("removeEnemy/{accountId}")]
-        //public IActionResult RemoveEnemyFromSpyDuhAccount(Guid accountId, Guid enemyId)
-        //{
-        //    var member = _spyDuhMembersRepository.GetById(accountId);
-        //    if (!(member.Enemies.Any()) || !(member.Enemies.Contains(enemyId)))
-        //    {
-        //        return NotFound("No enemies exist, or enemy does not exist under this member.");
-        //    }
-        //    _spyDuhMembersRepository.RemoveEnemyFromSpyDuhAccount(accountId, enemyId);
-        //    return Ok(member);
-        //}
+        [HttpDelete("deleteEnemy/{id}")]
+        public IActionResult RemoveEnemy(Guid id)
+        {
+            _spyDuhMembersRepository.RemoveEnemy(id);
+            return Ok();
+        }
 
         //[HttpGet("enemies/{accountId}")]
         //public IActionResult ShowEnemiesOfAccount(Guid accountId)
